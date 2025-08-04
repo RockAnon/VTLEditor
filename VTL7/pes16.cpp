@@ -492,7 +492,51 @@ void fill_team_tactics16(int &current_byte, void* ghdescriptor, team_entry* gtea
 	current_byte+=0x1FA;
 
 	gteams[t_ind].captain_ind = (char)pDescriptorOld->data[current_byte];
+<<<<<<< Updated upstream
 	current_byte+=0xA;
+=======
+	current_byte -= 0x197;
+	for(int preset=0;preset<3;preset++) //note that "preset 0" here is p1 in game
+	{
+		gteams[t_ind].attacking_style[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].build_up[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].attacking_area[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].positioning[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].defensive_styles[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].containment_area[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].pressuring[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].sr[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].numbers_in_attack[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].dline[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].compactness[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		gteams[t_ind].numbers_in_defence[preset] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		for(int ii=0; ii<11; ii++)
+		{
+		gteams[t_ind].ManMarking[preset][ii] = pDescriptorOld->data[current_byte];
+		current_byte++;
+		}
+		current_byte+=0x64;
+	}
+	current_byte += 0x2A;
+	gteams[t_ind].AutoSub = pDescriptorOld->data[current_byte];
+	current_byte++;
+	gteams[t_ind].AutoOffside = pDescriptorOld->data[current_byte];
+	current_byte++;
+	gteams[t_ind].AutoPresetTactics = pDescriptorOld->data[current_byte];
+	current_byte+=0x4;
+>>>>>>> Stashed changes
 }
 
 //-------------------------------------------------------------------------------------

@@ -1066,10 +1066,141 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
         errorTot++;
         errorMsg << _T("Number of Gold medals is ") << numGold << _T(", should be ") << reqNumGold << _T("; ");
     }
+<<<<<<< Updated upstream
+=======
+	if (pesVersion == 16)
+	{
+		for (int preset = 1;preset < 4;preset++) //note this preset number needs to be reduced by 1 to work with ManMarking[preset]
+		{
+			for (int ii = 0; ii < 11; ii++)
+			{
+				if (gteams[teamSel].ManMarking[preset-1][ii] != 255) //preset-1 used to get the right data
+				{
+					errorTot++;
+					errorMsg << _T("Man marking is set up on preset ") << preset << _T(". Man marking settings cannot be changed in PES, decrypt your save and use a hex editor to fix it, remake your team starting from an old save without this issue, or ask for help; ");
+					break;
+
+				}
+			}
+		}
+		if(gteams[teamSel].AutoSub!=0)
+			{
+				errorTot++;
+				errorMsg << _T("Auto subs are on; ");
+			}
+		if(gteams[teamSel].AutoOffside!=0)
+			{
+				errorTot++;
+				errorMsg << _T("Auto offside trap is on; ");
+			}
+		if(gteams[teamSel].AutoPresetTactics!=0)
+			{
+				errorTot++;
+				errorMsg << _T("Auto change preset tactics is on; ");
+			}
+	}
+	
+>>>>>>> Stashed changes
 	if(errorMsg.rdbuf()->in_avail())
 		errorMsg << _T("\r\n");
 	errorMsg << _T("\r\nErrors: ") << errorTot << _T("\r\n");
 	msgOut+=errorMsg.str();
+
+	if (pesVersion == 16) //this was for testing purposes to see if the information obtained was correct, but can be used to find teams with certain sliders without opening pes
+	{
+		tstringstream tacticalMsg;
+		tstring offensive_sliders[3];
+		tstring defensive_sliders[3];
+		tacticalMsg << _T("\r\nSlider settings:\r\n");
+		for (int preset = 0;preset < 3;preset++) //1 needs to be added to this if displaying this number to match pes conventions, ie "preset [preset+1]"
+		{
+			if (gteams[teamSel].attacking_style[preset] == 0)
+			{
+				offensive_sliders[preset] = _T("C");
+			}
+			else
+			{
+				offensive_sliders[preset] = _T("P");
+			}
+			if (gteams[teamSel].build_up[preset] == 0)
+			{
+				offensive_sliders[preset] += _T("L");
+			}
+			else
+			{
+				offensive_sliders[preset] += _T("S");
+			}
+			if (gteams[teamSel].attacking_area[preset] == 0)
+			{
+				offensive_sliders[preset] += _T("W");
+			}
+			else
+			{
+				offensive_sliders[preset] += _T("C");
+			}
+			if (gteams[teamSel].positioning[preset] == 0)
+			{
+				offensive_sliders[preset] += _T("M");
+			}
+			else
+			{
+				offensive_sliders[preset] += _T("F");
+			}
+			offensive_sliders[preset] += std::to_wstring(gteams[teamSel].sr[preset]);
+			if (gteams[teamSel].numbers_in_attack[preset] == 1)
+			{
+				offensive_sliders[preset] += _T(" Few");
+			}
+			else if (gteams[teamSel].numbers_in_attack[preset] == 2)
+			{
+				offensive_sliders[preset] += _T(" Medium");
+			}
+			else if (gteams[teamSel].numbers_in_attack[preset] == 3)
+			{
+				offensive_sliders[preset] += _T(" Many");
+			}
+			if (gteams[teamSel].defensive_styles[preset] == 0)
+			{
+				defensive_sliders[preset] = _T("F");
+			}
+			else
+			{
+				defensive_sliders[preset] = _T("A");
+			}
+			if (gteams[teamSel].containment_area[preset] == 0)
+			{
+				defensive_sliders[preset] += _T("M");
+			}
+			else
+			{
+				defensive_sliders[preset] += _T("W");
+			}
+			if (gteams[teamSel].pressuring[preset] == 0)
+			{
+				defensive_sliders[preset] += _T("A");
+			}
+			else
+			{
+				defensive_sliders[preset] += _T("C");
+			}
+			defensive_sliders[preset] += std::to_wstring(gteams[teamSel].dline[preset]);
+			defensive_sliders[preset] += std::to_wstring(gteams[teamSel].compactness[preset]);
+			if (gteams[teamSel].numbers_in_defence[preset] == 1)
+			{
+				defensive_sliders[preset] += _T(" Few");
+			}
+			else if (gteams[teamSel].numbers_in_defence[preset] == 2)
+			{
+				defensive_sliders[preset] += _T(" Medium");
+			}
+			else if (gteams[teamSel].numbers_in_defence[preset] == 3)
+			{
+				defensive_sliders[preset] += _T(" Many");
+			}
+			tacticalMsg << ("Preset ") << preset + 1 << (" is: ") << offensive_sliders[preset] << ("/") << defensive_sliders[preset] << (";\r\n"); //1 added to preset to match pes conventions
+		}
+		msgOut += tacticalMsg.str();
+	}
 
 	SetWindowText(GetDlgItem(hAatfbox, IDT_AATFOUT), msgOut.c_str());
 	if(errorTot)

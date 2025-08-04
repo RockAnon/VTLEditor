@@ -569,6 +569,31 @@ struct team_entry
 	bool b_changed;
 	bool b_show;
 
+<<<<<<< Updated upstream
+=======
+	
+	int ManMarking[3][11]; //manmarking data for all presets.
+
+	int AutoSub; //autosub setting. if off, is 0
+	int AutoOffside; //auto offside setting. if off, is 0. 1 is very late, 2 is flexible, 3 is very early
+	int AutoPresetTactics; //auto change preset tactics. if off, is 0
+
+
+	//these arrays carry info for all 3 presets. the first value is p1, second is p2, third is p3
+	int attacking_style[3]; //counter attack is 0, possession is 1
+	int build_up[3]; //long pass is 0, short is 1
+	int attacking_area[3]; //wide is 0, center is 1
+	int positioning[3]; //positioning instruction. maintain is 0, flexible is 1
+	int defensive_styles[3]; //frontline pressure is 0, all out defence is 1
+	int containment_area[3]; //middle is 0, wide is 1
+	int pressuring[3]; //aggressive is 0, conservative is 1
+	int sr[3]; //support range. 1 to 10
+	int numbers_in_attack[3]; //1 is few, 2 medium, 3 many
+	int dline[3]; //defensive line slider. 1 to 10
+	int compactness[3]; //1 to 10
+	int numbers_in_defence[3]; //1 is few, 2 medium, 3 many
+
+>>>>>>> Stashed changes
 	//Constructor
 	team_entry()
 	{
