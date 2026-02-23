@@ -231,6 +231,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
         bool hasTrick = false;
 		bool hasTrickCom = false;
 		int targetRate = 0;
+		//rating is no longer used:
 		int rating = player.clearing; //this needs to be a stat that isn't changed from base rates
 
 
@@ -460,21 +461,22 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             if(player.play_skill[jj])
             {
                 cardCount++;
-				//Captain gets free captaincy card and stat bonus
+				//Captain gets free captaincy card, count it as a trick
 				if (jj == 25 && player.id == gteams[teamSel].players[gteams[teamSel].captain_ind])
 				{
-					cardMod += 1;
+					hasTrick = true;
+					numTrick++;
 					//targetRate += captainStatBonus;
 					isCaptain = true;
 				}
-				//buffed players can take one touch pass and weighted pass for free
-				if ((jj == 12 || jj == 13) && player.height == buffed::height)
+				//nonmedals can take one touch pass, weighted pass, and pinpoint crossing for free
+				if ((jj == 12 || jj == 13 || jj==14) && (player.height == buffed::height || player.height == nm::height || player.height == nm::gk_height))
 				{
 					hasTrick = true;
 					numTrick++;
 				}
                 //Trick cards may be free, count number
-                if(jj<6 || jj == 9 || jj==11|| jj == 21 || jj==28 || jj==29 || jj==30 || jj==34 )
+                if(jj<6 || jj == 9 || jj==11|| jj == 21 || jj==28 || jj==29 || jj==30 || jj==10 )
 				{
                     hasTrick = true;
 					numTrick++;
@@ -736,7 +738,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			cardMin = regSkillCardsMin;
 
 			weakFoot = weak_foot_usage;
-			if (player.play_pos[10]==2||player.play_pos[11]==2||player.play_pos[6] == 2||player.play_pos[5]==2) //playable at LB, RB, CMF, or DMF
+			if (player.play_pos[10]==2||player.play_pos[11]==2) //playable at LB or RB
 			{
 				weakFoot = weak_foot_usage_debuff;
 			}
@@ -891,16 +893,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				errorTot++;
 				errorMsg << _T("Regulars can't be captain; ");
 			}
-
-			if (player.reg_pos == 0 || player.reg_pos == 1 || player.reg_pos == 9 || player.reg_pos == 10 || player.reg_pos == 12)
+			//removed restriction on what positions can be buffed
+			/*if (player.reg_pos == 0 || player.reg_pos == 1 || player.reg_pos == 9 || player.reg_pos == 10 || player.reg_pos == 12)
 			{
 				errorTot++;
 				errorMsg << _T("Only LB, RB, DMF, LMF, RMF, CMF, AMF, or SS registered position players can be buffed; ");
 			}
-			if (player.play_pos[9] == 2)
+			*/
+			if (player.play_pos[9] == 2 || player.play_pos[12] == 2)
 			{
 				errorTot++;
-				errorMsg << _T("Buffed players may not have an A-position at CB; ");
+				errorMsg << _T("188cm players may not have an A-position at CB or GK; ");
 			}
 			else if (player.reg_pos != 0 && player.form + 1 != form)
 			{
@@ -941,7 +944,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			}*/
 		}
 		/* SILVER */
-        else if(player.height == silver::height) //Silver player
+        else if(player.height == silver::height && player.swerve == !silver::curl * silver::base_stat + !!silver::curl * silver::curl) //Silver player, 2nd part is checking curl. =silver::base_stat if silver::curl=0, or =silver::curl if it's not 0
         {
 			using namespace silver; //all stats pulled from silver namespace
 			isSilver = true;
@@ -1138,7 +1141,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			}*/
         }
 		/* GOLD */
-        else if (player.height == gold::height) //Gold player
+        else if (player.height == gold::height && player.swerve == !gold::curl * gold::base_stat + !!gold::curl * gold::curl) //Gold player, 2nd part is checking curl. =gold::base_stat if gold::curl=0, or =gold::curl if it's not 0
         {
 			using namespace gold;
 			isGold = true;
@@ -1330,7 +1333,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		else
 		{
 			errorTot++;
-			errorMsg << _T("Illegal Ability scores, this player's height does not match any available player types; "); //mentions that height is what is being checked
+			errorMsg << _T("Illegal Ability scores, this player's height and/or swerve does not match any available player types; "); //mentions that height (and sometimes swerve) is what is being checked
 			//spit out whatever errors were already found, but target scores can't be set, so quit out of this player to avoid useless error outputs
 			errorMsg << _T("\r\n");
 			msgOut += _T("\t");
@@ -1358,12 +1361,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		if (player.weak_use + 1 != weakFoot)
 		{
 			errorTot++;
-			errorMsg << _T("Weak foot usage > ") << weakFoot << _T("; ");
+			errorMsg << _T("Wrong weak foot usage, allowed weak foot usage is ") << weakFoot << _T("; ");
 		}
 		if (player.weak_acc + 1 != weakFoot)
 		{
 			errorTot++;
-			errorMsg << _T("Weak foot accuracy > ") << weakFoot << _T("; ");
+			errorMsg << _T("Wrong weak foot accuracy, allowed weak foot accuracy is ") << weakFoot << _T("; ");
 		}
 
 		//Check player skill card count
@@ -1455,11 +1458,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		}
 
 		//Check PES skill card limit of 10
-		//21 apparently can load over 10 cards, limit is set at 11 now.
-		if (cardCount > 11)
+		//21 apparently can load over 10 cards, limit is set at 12 now.
+		if (cardCount > 12)
 		{
 			errorTot++;
-			errorMsg << _T("Has ") << cardCount << _T(" skill cards, only allowed 11; ");
+			errorMsg << _T("Has ") << cardCount << _T(" skill cards, only allowed 12; ");
 		}
 
 		//Check COM hard cap
@@ -1705,12 +1708,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
     if(numReg != nm::count)
     {
         errorTot++;
-        errorMsg << _T("Number of Regular players is ") << numReg << _T(", should be ") << nm::count << _T("; ");
+        errorMsg << _T("Number of 178cm players is ") << numReg << _T(", should be ") << nm::count << _T("; ");
     }
 	if (numBuff != buffed::count)
 	{
 		errorTot++;
-		errorMsg << _T("Number of Buffed players is ") << numBuff << _T(", should be ") << buffed::count << _T("; ");
+		errorMsg << _T("Number of 188cm players is ") << numBuff << _T(", should be ") << buffed::count << _T("; ");
 	}
     if(numSilver != silver::count)
     {
@@ -1725,7 +1728,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 	if (buffPosition3 != -1)
 	{
 		errorTot++;
-		errorMsg << _T("Too many registered positions with buffed players. Maximum is 2; ");
+		errorMsg << _T("Too many registered positions with 188cm players. Maximum is 2; ");
 	}
 	//check that there are no nonbuffed nonmedal players in registered positions that are buffed
 	for (int ii = 0; ii < gteams[teamSel].num_on_team; ii++)
@@ -1742,7 +1745,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		if ((player.reg_pos == buffPosition1 || player.reg_pos == buffPosition2) && player.height==nm::height)
 		{
 			errorTot++;
-			errorMsg << _T("Player ") << player.name << _T(" has the same registererd position as a buffed player, but isn't a buffed non-medal; ");
+			errorMsg << _T("Player ") << player.name << _T(" has the same registered position as a 188cm player, but isn't a 188cm player; ");
 		}
 
 	}

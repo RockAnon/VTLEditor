@@ -52,6 +52,7 @@ BEGIN
 		MENUITEM "&Set boot/glove ID",						IDM_TEAM_BOGLO
 		MENUITEM "&Save squad",								IDM_TEAM_SAVES
 		MENUITEM "&Load squad",								IDM_TEAM_LOADS
+		MENUITEM "&Update team stats (experimental)",		IDM_TEAM_UPDAT
     END
 	POPUP "&Database"
     BEGIN

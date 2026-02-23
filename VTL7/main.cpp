@@ -45,6 +45,7 @@ void save_handler(const TCHAR *);
 
 void export_squad(HWND);
 void import_squad(HWND);
+void update_squad(HWND);
 
 void extract_player_entry(player_entry, int &);
 
@@ -172,7 +173,7 @@ int APIENTRY _tWinMain(HINSTANCE I, HINSTANCE PI, LPTSTR CL, int SC)
 	ghw_main = CreateWindowEx(
 		0,
 		wc.lpszClassName,
-		_T("Unity Cup 3 Editor 0.0"),
+		_T("VTL10 Editor 1.0"),
 		WS_OVERLAPPEDWINDOW,
 		20, 20, 1120+144, 700,
 		NULL, NULL, ghinst, NULL);
@@ -758,6 +759,10 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					if(gn_teamsel > -1) import_squad(H);
 					else MessageBox(H,_T("Please select a team to overwrite."),NULL,MB_ICONWARNING);
 				break;
+				case IDM_TEAM_UPDAT:
+					if (gn_teamsel > -1) update_squad(H);
+					else MessageBox(H, _T("Please select a team to update."), NULL, MB_ICONWARNING);
+				break;
 				case IDM_DATA_OUTPUT:
 					if(gplayers) roster_data_output();
 				break;
@@ -1204,7 +1209,7 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					}
 				}
 				break;
-				case IDB_MAKE_BUFF:
+				case IDB_MAKE_BUFF: //now known as "188cm players"
 				{
 					if (HIWORD(W) == BN_CLICKED)
 					{
@@ -1270,7 +1275,7 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)std::to_wstring(injury_resistance).c_str());
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage).c_str());
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy).c_str());
-						if (SendDlgItemMessage(ghw_tab1, IDS_PLAY_LB, TBM_GETPOS, 0, 0)==2|| SendDlgItemMessage(ghw_tab1, IDS_PLAY_RB, TBM_GETPOS, 0, 0) == 2|| SendDlgItemMessage(ghw_tab1, IDS_PLAY_CMF, TBM_GETPOS, 0, 0) == 2 || SendDlgItemMessage(ghw_tab1, IDS_PLAY_DMF, TBM_GETPOS, 0, 0) == 2) //player has a playable position of LB, RB, CMF, or DMF
+						if (SendDlgItemMessage(ghw_tab1, IDS_PLAY_LB, TBM_GETPOS, 0, 0)==2|| SendDlgItemMessage(ghw_tab1, IDS_PLAY_RB, TBM_GETPOS, 0, 0) == 2) //player has a playable position of LB or RB
 						{
 							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage_debuff).c_str());
 							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy_debuff).c_str());
@@ -5671,6 +5676,11 @@ void import_squad(HWND hwnd)
 
 	if(gn_listsel < 0) 
 		return;
+	if (gn_listsel > 0)
+	{
+		MessageBox(ghw_main, _T("Please select the first player on the team!"), NULL, MB_ICONWARNING); //for some reason if you have a different player selected, it won't be updated.
+		return;
+	}
 
 	csel = SendDlgItemMessage(ghw_main, IDC_TEAM_LIST, CB_GETCURSEL, 0, 0) - 1;
 
@@ -5839,6 +5849,354 @@ void import_squad(HWND hwnd)
 		//Close filestream
 		input_file.close();
 	}
+}
+
+void update_squad(HWND hwnd)
+{
+	//USES_CONVERSION; //required for A2W, W2A, A2T, T2A macros
+	int ii, jj, kk, num_on_team, csel;
+
+	if (gn_listsel < 0)
+		return;
+	if (gn_listsel > 0)
+	{
+		MessageBox(ghw_main, _T("Please select the first player on the team!"), NULL, MB_ICONWARNING); //for some reason if you have a different player selected, it won't be updated.
+		return;
+	}
+	csel = SendDlgItemMessage(ghw_main, IDC_TEAM_LIST, CB_GETCURSEL, 0, 0) - 1;
+
+	//First update the data structure to reflect any changes the user has made to the current player/team
+	player_entry pe_current = get_form_player_info(gn_playind[gn_listsel]);
+	if (!(gplayers[gn_playind[gn_listsel]] == pe_current))
+	{
+		if (wcscmp(gplayers[gn_playind[gn_listsel]].name, pe_current.name))
+			pe_current.b_edit_player = true;
+		gplayers[gn_playind[gn_listsel]] = pe_current;
+
+		//Update displayed name
+		LVITEM lvI;
+		memset(&lvI, 0, sizeof(lvI)); //Zero out struct members
+		lvI.mask = LVIF_TEXT;
+		lvI.pszText = pe_current.name;
+		lvI.iItem = gn_listsel;
+		SendDlgItemMessage(ghw_main, IDC_NAME_LIST, LVM_SETITEM, 0, (LPARAM)&lvI);
+
+		show_player_info(gn_playind[gn_listsel]);
+	}
+
+	//Check and update team tables
+	team_entry te_current;
+	if (get_form_team_info(gn_playind[gn_listsel], te_current))
+	{
+		int ti = gplayers[gn_playind[gn_listsel]].team_ind;
+		if (!(gteams[ti] == te_current))
+		{
+			gteams[ti] = te_current;
+
+			//Update combobox
+			//int csel = SendDlgItemMessage(ghw_main, IDC_TEAM_LIST, CB_GETCURSEL, 0, 0);
+			SendDlgItemMessage(ghw_main, IDC_TEAM_LIST, CB_DELETESTRING, gn_teamArrayIndToCb[ti] + 1, 0);
+			SendDlgItemMessage(ghw_main, IDC_TEAM_LIST, CB_INSERTSTRING, gn_teamArrayIndToCb[ti] + 1, (LPARAM)te_current.name);
+			SendDlgItemMessage(ghw_main, IDC_TEAM_LIST, CB_SETCURSEL, csel + 1, 0);
+		}
+	}
+	
+	//Find number of players on this team
+	for (num_on_team = 0;num_on_team < gteams->team_max;num_on_team++)
+	{
+		if (!gteams[gn_teamCbIndToArray[csel]].players[num_on_team]) break;
+	}
+	//Find the entry in the gplayer array matching each player ID on this team
+	kk = 0;
+	bool has_gold_name = false;
+	bool has_silver_name = false;
+	for (ii = 0;ii < gnum_players;ii++) //cycle through all players and see if there are gold and silver colored names
+	{
+		for (jj = 0;jj < num_on_team;jj++)
+		{
+			if (gplayers[ii].id == gteams[gn_teamCbIndToArray[csel]].players[jj])
+			{
+				player_entry player = gplayers[ii];
+				if (wcsncmp(player.name, L"ccc9900ff", 10) == 0) //name starts with gold color
+				{
+					has_gold_name = true;
+				}
+				else if (wcsncmp(player.name, L"c51bbc4ff", 10) == 0) //name starts with silver color
+				{
+					has_silver_name = true;
+				}
+				kk++;
+				break;
+			}
+		}
+		//Stop when all players scanned.
+		if (kk == num_on_team) break;
+	}
+	if ((has_gold_name && has_silver_name) == false) //at least one color is missing
+	{
+		MessageBox(ghw_main, _T("Missing gold and/or silver colored names. Set medals manually with the make gold/make silver buttons, then try again."), NULL, MB_ICONWARNING);
+		return;
+	}
+	//Find the entry in the gplayer array matching each player ID on this team
+	kk = 0;
+	int non_gk_height1 = 0;
+	int non_gk_height2 = 0;
+	int non_gk_height3 = 0;
+	for (ii = 0;ii < gnum_players;ii++) //cycle through all players and find 2 unique heights for nonmedal nongk players
+	{
+		for (jj = 0;jj < num_on_team;jj++)
+		{
+			if (gplayers[ii].id == gteams[gn_teamCbIndToArray[csel]].players[jj])
+			{
+				player_entry player = gplayers[ii];
+				if (wcsncmp(player.name, L"ccc9900ff", 10) != 0 && wcsncmp(player.name, L"c51bbc4ff", 10) != 0) //name does not start with gold or silver color, so it's a nonmedal
+				{
+					if (player.reg_pos != 0) //player is not a gk, so we want to note this players height
+					{
+						if (non_gk_height1 == 0) //first height is not used yet, so we use it
+						{
+							non_gk_height1 = player.height;
+						}
+						else if (non_gk_height1 != player.height && non_gk_height2 == 0) //first height was used and height2 is unused, but this height is different, so we use height2
+						{
+							non_gk_height2 = player.height;
+						}
+						else if ((non_gk_height1 != player.height) && (non_gk_height2 != player.height) && non_gk_height3 == 0) //first and second heights used and height3 is unused, but this height is different, so we use height3.
+						{
+							non_gk_height3 = player.height;
+						}
+					}
+				}
+				kk++;
+				break;
+			}
+		}
+		//Stop when three unique heights have been found, or all players scanned.
+		if (kk == num_on_team || (non_gk_height1 != 0 && non_gk_height2 != 0 && non_gk_height3 != 0)) break;
+	}
+	int buffed_height = 0; //set this as 0 so it won't be used later if there wasn't a 2nd height found, or if a third height was found
+	//if a third height was found, assume this is an export with a more complicated height system, default all players to normal nms
+	if (non_gk_height2 != 0 && non_gk_height3 == 0) //found a 2nd height, but not a third
+	{
+		buffed_height = max(non_gk_height1, non_gk_height2); //taller height is the buffed player height
+	}
+
+	
+
+	kk = 0;
+	for (ii = 0;ii < gnum_players;ii++) //cycle through all players and update their stats
+	{
+		for (jj = 0;jj < num_on_team;jj++)
+		{
+			if (gplayers[ii].id == gteams[gn_teamCbIndToArray[csel]].players[jj])
+			{
+				player_entry player = gplayers[ii];
+				if (wcsncmp(player.name, L"ccc9900ff", 10) == 0) //name starts with gold color, assume this player is a gold
+				{
+					using namespace gold;
+					player.height = height;
+					player.weak_use = weak_foot_usage-1; //-1 is needed to make this line up with expected usage
+					player.weak_acc = weak_foot_accuracy-1; //-1 is needed to make this line up with expected usage
+					player.form = form-1; //-1 is needed to make this line up with expected usage
+					player.injury = injury_resistance-1; //-1 is needed to make this line up with expected usage
+					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
+					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
+					player.finish = !finishing * base_stat + !!finishing * finishing;
+					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
+					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
+					player.header = !header * base_stat + !!header * header;
+					player.swerve = !curl * base_stat + !!curl * curl;
+					player.catching = !catching * base_stat + !!catching * catching;
+					player.clearing = !clearing * base_stat + !!clearing * clearing;
+					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
+					player.body_ctrl = !balance * base_stat + !!balance * balance;
+					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
+					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
+					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
+					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
+					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
+					player.jump = !jump * base_stat + !!jump * jump;
+					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
+					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
+					player.stamina = !stamina * base_stat + !!stamina * stamina;
+					player.speed = !speed * base_stat + !!speed * speed;
+					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
+					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
+					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
+					player.aggres = !aggression * base_stat + !!aggression * aggression;
+				}
+				else if (wcsncmp(player.name, L"c51bbc4ff", 10) == 0) //name starts with silver color, assume this player is a silver
+				{
+					using namespace silver;
+					player.height = height;
+					player.weak_use = weak_foot_usage - 1; //-1 is needed to make this line up with expected usage
+					player.weak_acc = weak_foot_accuracy - 1; //-1 is needed to make this line up with expected usage
+					player.form = form - 1; //-1 is needed to make this line up with expected usage
+					player.injury = injury_resistance - 1; //-1 is needed to make this line up with expected usage
+					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
+					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
+					player.finish = !finishing * base_stat + !!finishing * finishing;
+					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
+					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
+					player.header = !header * base_stat + !!header * header;
+					player.swerve = !curl * base_stat + !!curl * curl;
+					player.catching = !catching * base_stat + !!catching * catching;
+					player.clearing = !clearing * base_stat + !!clearing * clearing;
+					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
+					player.body_ctrl = !balance * base_stat + !!balance * balance;
+					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
+					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
+					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
+					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
+					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
+					player.jump = !jump * base_stat + !!jump * jump;
+					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
+					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
+					player.stamina = !stamina * base_stat + !!stamina * stamina;
+					player.speed = !speed * base_stat + !!speed * speed;
+					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
+					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
+					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
+					player.aggres = !aggression * base_stat + !!aggression * aggression;
+				}
+				else if (player.reg_pos == 0) //player is a gk
+				{
+					using namespace nm;
+					player.height = gk_height; //gk, so use gk height
+					player.weak_use = weak_foot_usage - 1; //-1 is needed to make this line up with expected usage
+					player.weak_acc = weak_foot_accuracy - 1; //-1 is needed to make this line up with expected usage
+					player.form = gk_form-1; //gk, so use gk form, -1 is needed to make this line up with expected usage
+					player.injury = injury_resistance - 1; //-1 is needed to make this line up with expected usage
+					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
+					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
+					player.finish = !finishing * base_stat + !!finishing * finishing;
+					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
+					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
+					player.header = !header * base_stat + !!header * header;
+					player.swerve = !curl * base_stat + !!curl * curl;
+					player.catching = !catching * base_stat + !!catching * catching;
+					player.clearing = !clearing * base_stat + !!clearing * clearing;
+					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
+					player.body_ctrl = !balance * base_stat + !!balance * balance;
+					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
+					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
+					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
+					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
+					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
+					player.jump = !jump * base_stat + !!jump * jump;
+					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
+					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
+					player.stamina = !stamina * base_stat + !!stamina * stamina;
+					player.speed = !speed * base_stat + !!speed * speed;
+					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
+					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
+					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
+					player.aggres = !aggression * base_stat + !!aggression * aggression;
+				}
+				else if (player.height == buffed_height) //buffed player
+				{
+					
+					using namespace buffed;
+					player.height = height;
+					if (player.play_pos[10] == 2 || player.play_pos[11] == 2) //playable at LB or RB
+					{
+						player.weak_use = weak_foot_usage_debuff -1; //-1 is needed to make this line up with expected usage
+						player.weak_acc = weak_foot_accuracy_debuff -1; //-1 is needed to make this line up with expected usage
+					}
+					else
+					{
+						player.weak_use = weak_foot_usage - 1; //-1 is needed to make this line up with expected usage
+						player.weak_acc = weak_foot_accuracy - 1; //-1 is needed to make this line up with expected usage
+					}
+					player.form = form - 1; //-1 is needed to make this line up with expected usage
+					player.injury = injury_resistance - 1; //-1 is needed to make this line up with expected usage
+					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
+					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
+					player.finish = !finishing * base_stat + !!finishing * finishing;
+					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
+					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
+					player.header = !header * base_stat + !!header * header;
+					player.swerve = !curl * base_stat + !!curl * curl;
+					player.catching = !catching * base_stat + !!catching * catching;
+					player.clearing = !clearing * base_stat + !!clearing * clearing;
+					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
+					player.body_ctrl = !balance * base_stat + !!balance * balance;
+					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
+					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
+					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
+					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
+					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
+					player.jump = !jump * base_stat + !!jump * jump;
+					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
+					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
+					player.stamina = !stamina * base_stat + !!stamina * stamina;
+					player.speed = !speed * base_stat + !!speed * speed;
+					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
+					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
+					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
+					player.aggres = !aggression * base_stat + !!aggression * aggression;
+				}
+				else //this is a nonmedal, also a failsafe to make sure all players get updated
+				{
+					using namespace nm;
+					player.height = height;
+					player.weak_use = weak_foot_usage - 1; //-1 is needed to make this line up with expected usage
+					player.weak_acc = weak_foot_accuracy - 1; //-1 is needed to make this line up with expected usage
+					player.form = form - 1; //-1 is needed to make this line up with expected usage
+					player.injury = injury_resistance - 1; //-1 is needed to make this line up with expected usage
+					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
+					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
+					player.finish = !finishing * base_stat + !!finishing * finishing;
+					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
+					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
+					player.header = !header * base_stat + !!header * header;
+					player.swerve = !curl * base_stat + !!curl * curl;
+					player.catching = !catching * base_stat + !!catching * catching;
+					player.clearing = !clearing * base_stat + !!clearing * clearing;
+					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
+					player.body_ctrl = !balance * base_stat + !!balance * balance;
+					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
+					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
+					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
+					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
+					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
+					player.jump = !jump * base_stat + !!jump * jump;
+					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
+					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
+					player.stamina = !stamina * base_stat + !!stamina * stamina;
+					player.speed = !speed * base_stat + !!speed * speed;
+					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
+					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
+					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
+					player.aggres = !aggression * base_stat + !!aggression * aggression;
+				}
+				player.play_skill[21] = 1; //make sure malicia is on
+				player_export updated_player = player.PlayerExport();
+				gplayers[ii].PlayerImport(updated_player);
+				gplayers[ii].b_changed = true;
+
+				kk++;
+				break;
+			}
+		}
+		//Stop when every player has been updated
+		if (kk == num_on_team) break;
+	}
+	if (buffed_height == 0) //couldn't determine the buffed player height
+	{
+		MessageBox(ghw_main, _T("Could not determine buffed players. All nonmedals defaulted to nonbuffed nonmedals."), _T("Warning"), MB_ICONWARNING);
+	}
+	int num_lv_entries = ListView_GetItemCount(GetDlgItem(ghw_main, IDC_NAME_LIST));
+	for (ii = 0;ii < num_lv_entries;ii++)
+	{
+		ListView_SetItemText(GetDlgItem(ghw_main, IDC_NAME_LIST), ii, 0, gplayers[gn_playind[ii]].name)
+			show_player_info(gn_playind[gn_listsel]);
+	}
+	ListView_EnsureVisible(GetDlgItem(ghw_main, IDC_NAME_LIST), 0, false);
+	ListView_SetItemState(GetDlgItem(ghw_main, IDC_NAME_LIST), 0, LVIS_SELECTED, LVIS_SELECTED);
+	//Fix this: update view to show info on first item in list, as it's been selected
+
+	
 }
 
 BOOL CALLBACK bogloDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) //Set current team's player boots and gloves
