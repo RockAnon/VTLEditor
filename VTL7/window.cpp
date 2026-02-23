@@ -48,12 +48,12 @@ void setup_main(HWND H)
 		20, 552, 250, 26, H, (HMENU)IDB_MAKE_SILV, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("178cm"),
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Regular"),
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 		20, 584, 100, 26, H, (HMENU)IDB_MAKE_REGU, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("188cm"), 
+	/*hw_new = CreateWindowEx(0, _T("Button"), _T("Captain"), //hidden as no longer used
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 		80, 584, 60, 26, H, (HMENU)IDB_MAKE_CAPT, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
@@ -720,7 +720,7 @@ void setup_tab1(HWND H)
 		x1, y1+ydiff*9, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_ACRF, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Heel Trick*"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Heel Trick"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
 		x1, y1+ydiff*10, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_HEEL, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
@@ -841,7 +841,7 @@ void setup_tab1(HWND H)
 		x1+144, y1+ydiff*5, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_RISI, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("No Look Pass"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("No Look Pass*"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
 		x1+144, y1+ydiff*6, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_NOLO, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
