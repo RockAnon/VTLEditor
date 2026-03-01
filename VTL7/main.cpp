@@ -6257,6 +6257,7 @@ BOOL CALLBACK bogloDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam
 					{
 						//Set boot ID
 						gplayers[ii].boot_id = bootID;
+						gplayers[ii].b_changed = true;
 						playerCounter++;
 						bootID++;
 					}
@@ -6274,6 +6275,7 @@ BOOL CALLBACK bogloDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam
 					{
 						//Set glove ID as boot ID
 						gplayers[ii].glove_id = gplayers[ii].boot_id;
+						gplayers[ii].b_changed = true;
 						playerCounter++;
 					}
 				}
@@ -6295,6 +6297,7 @@ BOOL CALLBACK bogloDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam
 					{
 						//Set glove ID
 						gplayers[ii].glove_id = gloveID;
+						gplayers[ii].b_changed = true;
 						playerCounter++;
 					}
 				}
