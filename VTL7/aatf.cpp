@@ -525,13 +525,20 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			errorTot++;
 			errorMsg << _T("Age out of range (15,50); ");
 		}
-
-		if(player.weight<max(30,player.height-129) || player.weight>(player.height-81))
+		int minWeight = max(30, player.height - 129);
+		int maxWeight = player.height - 81;
+		//21 doesn't care about player height when it comes to weight
+		if (pesVersion == 21)
+		{
+			minWeight = 30;
+			maxWeight = 129;
+		}
+		if (player.weight<minWeight || player.weight>maxWeight)
 		{
 			errorTot++;
-			errorMsg << _T("Weight out of range (") << max(30,player.height-129) << _T(",") << player.height-81 << _T("); ");
+			errorMsg << _T("Weight out of range (") << minWeight << _T(",") << maxWeight << _T("); ");
 		}
-
+		
 		/* REGULAR */
 		if(player.height==nm::height || player.height==nm::gk_height) //Regular player
         {
@@ -542,7 +549,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
 			weakFoot = weak_foot_usage;
 
-
+			if (wcsncmp(player.name, L"ccc9900ff", 10) == 0 || wcsncmp(player.name, L"c51bbc4ff", 10) == 0) //name starts with gold or silver color
+			{
+				errorTot++;
+				errorMsg << _T("Player name has gold or silver color but isn't a medal; ");
+			}
 
 			//set the targets to the namespace values. note some of these are 0 as they should be base rate
 			targetDrib = dribbling;
@@ -741,6 +752,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			if (player.play_pos[10]==2||player.play_pos[11]==2) //playable at LB or RB
 			{
 				weakFoot = weak_foot_usage_debuff;
+			}
+
+			if (wcsncmp(player.name, L"ccc9900ff", 10) == 0 || wcsncmp(player.name, L"c51bbc4ff", 10) == 0) //name starts with gold or silver color
+			{
+				errorTot++;
+				errorMsg << _T("Player name has gold or silver color but isn't a medal; ");
 			}
 
 			//set the targets to the namespace values. note some of these are 0 as they should be base rate
@@ -954,6 +971,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
 			weakFoot = weak_foot_usage;
 
+			if (wcsncmp(player.name, L"c51bbc4ff", 10) != 0)
+			{
+				errorTot++;
+				errorMsg << _T("Player name is missing silver color; ");
+			}
+
 			//set the targets to the namespace values. note some of these are 0 as they should be base rate
 			targetDrib = dribbling;
 			targetGk = gk_awareness;
@@ -1151,6 +1174,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
 			weakFoot = weak_foot_usage;
 
+			if (wcsncmp(player.name, L"ccc9900ff", 10) != 0)
+			{
+				errorTot++;
+				errorMsg << _T("Player name is missing gold color; ");
+			}
             if(numGold > gold::count)
 			{
                 errorTot++;
