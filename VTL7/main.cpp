@@ -173,7 +173,7 @@ int APIENTRY _tWinMain(HINSTANCE I, HINSTANCE PI, LPTSTR CL, int SC)
 	ghw_main = CreateWindowEx(
 		0,
 		wc.lpszClassName,
-		_T("VTL10 Editor 1.0"),
+		_T("Post VTL10 Editor 1.0"),
 		WS_OVERLAPPEDWINDOW,
 		20, 20, 1120+144, 700,
 		NULL, NULL, ghinst, NULL);
@@ -1275,12 +1275,13 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)std::to_wstring(injury_resistance).c_str());
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage).c_str());
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy).c_str());
-						if (SendDlgItemMessage(ghw_tab1, IDS_PLAY_LB, TBM_GETPOS, 0, 0)==2|| SendDlgItemMessage(ghw_tab1, IDS_PLAY_RB, TBM_GETPOS, 0, 0) == 2) //player has a playable position of LB or RB
+						/* no longer used
+						if (SendDlgItemMessage(ghw_tab1, IDS_PLAY_LB, TBM_GETPOS, 0, 0) == 2 || SendDlgItemMessage(ghw_tab1, IDS_PLAY_RB, TBM_GETPOS, 0, 0) == 2) //player has a playable position of LB or RB
 						{
 							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage_debuff).c_str());
 							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy_debuff).c_str());
 						}
-
+						*/
 						Button_SetCheck(GetDlgItem(ghw_tab1, IDB_SKIL_LTHR), 0);
 
 						/*if (heightNum == 191 || heightNum == 198)
@@ -6098,16 +6099,15 @@ void update_squad(HWND hwnd)
 					
 					using namespace buffed;
 					player.height = height;
+					player.weak_use = weak_foot_usage - 1; //-1 is needed to make this line up with expected usage
+					player.weak_acc = weak_foot_accuracy - 1; //-1 is needed to make this line up with expected usage
+					/* no longer used
 					if (player.play_pos[10] == 2 || player.play_pos[11] == 2) //playable at LB or RB
 					{
 						player.weak_use = weak_foot_usage_debuff -1; //-1 is needed to make this line up with expected usage
 						player.weak_acc = weak_foot_accuracy_debuff -1; //-1 is needed to make this line up with expected usage
 					}
-					else
-					{
-						player.weak_use = weak_foot_usage - 1; //-1 is needed to make this line up with expected usage
-						player.weak_acc = weak_foot_accuracy - 1; //-1 is needed to make this line up with expected usage
-					}
+					*/
 					player.form = form - 1; //-1 is needed to make this line up with expected usage
 					player.injury = injury_resistance - 1; //-1 is needed to make this line up with expected usage
 					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0

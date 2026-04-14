@@ -476,7 +476,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 					numTrick++;
 				}
                 //Trick cards may be free, count number
-                if(jj<6 || jj == 9 || jj==11|| jj == 21 || jj==28 || jj==29 || jj==30 || jj==10 )
+                if(jj == 2 || jj == 4 || jj == 28 || jj == 16 || jj == 9 || jj == 11 || jj == 32 || jj == 33 || jj == 6 || jj == 21)
 				{
                     hasTrick = true;
 					numTrick++;
@@ -505,7 +505,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			if (player.com_style[jj])
 			{
 				numCom++;
-				if (jj ==3 || jj == 6) //incisive run and long ranger are free
+				if (jj == 6) //long ranger is free
 				{
 					hasTrickCom = true;
 					numTrickCom++;
@@ -749,11 +749,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			cardMin = regSkillCardsMin;
 
 			weakFoot = weak_foot_usage;
-			if (player.play_pos[10]==2||player.play_pos[11]==2) //playable at LB or RB
+			/* no longer used
+			if (player.play_pos[10] == 2 || player.play_pos[11] == 2) //playable at LB or RB
 			{
 				weakFoot = weak_foot_usage_debuff;
 			}
-
+			*/
 			if (wcsncmp(player.name, L"ccc9900ff", 10) == 0 || wcsncmp(player.name, L"c51bbc4ff", 10) == 0) //name starts with gold or silver color
 			{
 				errorTot++;
@@ -1486,11 +1487,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		}
 
 		//Check PES skill card limit of 10
-		//21 apparently can load over 10 cards, limit is set at 12 now.
-		if (cardCount > 12)
+		//21 apparently can load over 10 cards, limit is set at 11 now.
+		if (cardCount > 11)
 		{
 			errorTot++;
-			errorMsg << _T("Has ") << cardCount << _T(" skill cards, only allowed 12; ");
+			errorMsg << _T("Has ") << cardCount << _T(" skill cards, only allowed 11; ");
 		}
 
 		//Check COM hard cap
