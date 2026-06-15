@@ -30,14 +30,14 @@ namespace gold { //gold stats
 	const int curl = 0;
 	const int header = 0;
 	const int defensive_awareness = 64;
-	const int ball_winning = 0;
+	const int ball_winning = 94;
 	const int kicking_power = 0;
-	const int speed = 96;
+	const int speed = 94;
 	const int acceleration = 0;
 	const int balance = 0;
-	const int physical_contact = 0;
+	const int physical_contact = 94;
 	const int jump = 0;
-	const int stamina = 0;
+	const int stamina = 94;
 	const int gk_awareness = 0;
 	const int catching = 0;
 	const int clearing = 0;
@@ -58,7 +58,7 @@ namespace silver { //silver stats
 	const int weak_foot_accuracy = 4;
 	const int height = 194;
 	const int skills = 7; //max number of non free skills allowed
-	const int free_coms = 2; //free coms allowed
+	const int free_coms = 1; //free coms allowed
 	const int free_a = 3; //free a positions allowed, note this includes the A position that a registered position gives
 
 	const int base_stat = 90; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
@@ -149,18 +149,18 @@ namespace buffed { //buffed player stats
 	const int free_a = 1; //free a positions allowed, note this includes the A position that a registered position gives
 
 	const int base_stat = 77; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
-	const int offensive_awareness = 90;
+	const int offensive_awareness = 89;
 	const int ball_control = 87;
-	const int dribbling = 90;
+	const int dribbling = 89;
 	const int low_pass = 87;
 	const int lofted_pass = 87;
-	const int finishing = 90;
+	const int finishing = 89;
 	const int place_kicking = 70;
 	const int curl = 87;
 	const int header = 0;
 	const int defensive_awareness = 55;
 	const int ball_winning = 70;
-	const int kicking_power = 90;
+	const int kicking_power = 89;
 	const int speed = 87;
 	const int acceleration = 87;
 	const int balance = 87;

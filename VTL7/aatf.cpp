@@ -476,7 +476,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 					numTrick++;
 				}
                 //Trick cards may be free, count number
-                if(jj == 2 || jj == 4 || jj == 28 || jj == 16 || jj == 9 || jj == 11 || jj == 32 || jj == 33 || jj == 6 || jj == 21)
+                if(jj == 2 || jj == 34 || jj == 28 || jj == 16 || jj == 9 || jj == 11 || jj == 32 || jj == 33 || jj == 6 || jj == 21)
 				{
                     hasTrick = true;
 					numTrick++;
@@ -1644,6 +1644,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			errorMsg << _T("\r\n");
 			msgOut+=_T("\t");
 			msgOut+=errorMsg.str();
+		}
+		//warnings for disabled/enabled playstyles in exe
+		if (player.play_style == 1 && player.play_pos[0] == 2)
+		{
+			msgOut+= _T("\tWARNING: Goal Poacher does not activate at CF with current exe.");
+			msgOut += _T("\r\n");
+		}
+		if (player.play_style == 5 && player.play_pos[0] == 2)
+		{
+			msgOut+= _T("\tWARNING: Creative Playmaker activates at CF with current exe.");
+			msgOut += _T("\r\n");
 		}
 	}
 	//Team level errors
