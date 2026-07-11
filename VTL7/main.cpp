@@ -124,6 +124,13 @@ pf_decryptWithKeyNew decryptWithKeyNew;
 pf_encryptWithKeyOld encryptWithKeyOld;
 pf_encryptWithKeyNew encryptWithKeyNew;
 
+//playstyle stat buff array
+const int* full_stat_array_playstyle_buff[25] = {None::stat_array_playstyle_buff, Goal_Poacher::stat_array_playstyle_buff, Dummy_Runner::stat_array_playstyle_buff, Fox_in_the_Box::stat_array_playstyle_buff,
+   Target_Man::stat_array_playstyle_buff, Creative_Playmaker::stat_array_playstyle_buff, Prolific_Winger::stat_array_playstyle_buff, Roaming_Flank::stat_array_playstyle_buff, Crossing_Specialist::stat_array_playstyle_buff,
+   Classic_No_10::stat_array_playstyle_buff, Hole_Player::stat_array_playstyle_buff, Box_to_Box::stat_array_playstyle_buff, The_Destroyer::stat_array_playstyle_buff, Orchestrator::stat_array_playstyle_buff,
+   Anchor_Man::stat_array_playstyle_buff, Offensive_Fullback::stat_array_playstyle_buff, Fullback_Finisher::stat_array_playstyle_buff, Defensive_Fullback::stat_array_playstyle_buff, Build_Up::stat_array_playstyle_buff,
+   Extra_Frontman::stat_array_playstyle_buff, Offensive_Goalkeeper::stat_array_playstyle_buff, Defensive_Goalkeeper::stat_array_playstyle_buff };
+
 
 //The TCHAR-version of a user-provided entry point for a graphical 
 //  Windows-based application.
@@ -173,7 +180,7 @@ int APIENTRY _tWinMain(HINSTANCE I, HINSTANCE PI, LPTSTR CL, int SC)
 	ghw_main = CreateWindowEx(
 		0,
 		wc.lpszClassName,
-		_T("VTLA4 Editor 1.0"),
+		_T("VTL11 Friendlies Editor 1.0"),
 		WS_OVERLAPPEDWINDOW,
 		20, 20, 1120+144, 700,
 		NULL, NULL, ghinst, NULL);
@@ -871,17 +878,12 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					{
 						using namespace gold; //use gold stats only
 						int ii;
+						//SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_GETCURSEL, 0, 0) gets the index of the current player's playstyle
+						int temp_playstyle = SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_GETCURSEL, 0, 0);
+						//golds get stat changes if they are certain playstyles, found in full_stat_array_playstyle_buff
 						for (ii = IDT_ABIL_ATKP;ii < gi_lastAbility;ii += 2) 
 						{
-							if (stat_array[(ii - IDT_ABIL_ATKP) / 2] == 0) //stat is not changed from base stat value
-							{
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat).c_str());
-							}
-							else //stat is changed
-							{
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(stat_array[(ii - IDT_ABIL_ATKP) / 2]).c_str());
-							}
-
+							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat + stat_array_bonus[(ii - IDT_ABIL_ATKP) / 2] + full_stat_array_playstyle_buff[temp_playstyle][(ii - IDT_ABIL_ATKP) / 2]).c_str());
 						}
 						CheckDlgButton(ghw_tab1, IDB_SKIL_MALI, BST_CHECKED); //set malicia to on
 
@@ -971,15 +973,7 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						int ii;
 						for (ii = IDT_ABIL_ATKP;ii < gi_lastAbility;ii += 2)
 						{
-							if (stat_array[(ii - IDT_ABIL_ATKP) / 2] == 0) //stat is not changed from base stat value
-							{
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat).c_str());
-							}
-							else //stat is changed
-							{
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(stat_array[(ii - IDT_ABIL_ATKP) / 2]).c_str());
-							}
-
+							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat + stat_array_bonus[(ii - IDT_ABIL_ATKP) / 2]).c_str());
 						}
 						CheckDlgButton(ghw_tab1, IDB_SKIL_MALI, BST_CHECKED); //set malicia to on
 
@@ -1084,15 +1078,7 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						int ii;
 						for (ii = IDT_ABIL_ATKP;ii < gi_lastAbility;ii += 2)
 						{
-							if (stat_array[(ii - IDT_ABIL_ATKP) / 2] == 0) //stat is not changed from base stat value
-							{
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat).c_str());
-							}
-							else //stat is changed
-							{
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(stat_array[(ii - IDT_ABIL_ATKP) / 2]).c_str());
-							}
-
+							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat + stat_array_bonus[(ii - IDT_ABIL_ATKP) / 2]).c_str());
 						}
 						
 
@@ -1226,15 +1212,7 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						int ii;
 						for (ii = IDT_ABIL_ATKP;ii < gi_lastAbility;ii += 2)
 						{
-							if (stat_array[(ii - IDT_ABIL_ATKP) / 2] == 0) //stat is not changed from base stat value
-							{
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat).c_str());
-							}
-							else //stat is changed
-							{
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(stat_array[(ii - IDT_ABIL_ATKP) / 2]).c_str());
-							}
-
+							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat + stat_array_bonus[(ii - IDT_ABIL_ATKP) / 2]).c_str());
 						}
 
 
@@ -1275,6 +1253,11 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)std::to_wstring(injury_resistance).c_str());
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage).c_str());
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy).c_str());
+
+						if (SendDlgItemMessage(ghw_tab1, IDS_PLAY_CB, TBM_GETPOS, 0, 0) == 2) //A position at CB
+						{
+							SendDlgItemMessage(ghw_tab1, IDS_PLAY_CB, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)1); //set it to a B position
+						}
 						/* no longer used
 						if (SendDlgItemMessage(ghw_tab1, IDS_PLAY_LB, TBM_GETPOS, 0, 0) == 2 || SendDlgItemMessage(ghw_tab1, IDS_PLAY_RB, TBM_GETPOS, 0, 0) == 2) //player has a playable position of LB or RB
 						{
@@ -6000,31 +5983,31 @@ void update_squad(HWND hwnd)
 					player.weak_acc = weak_foot_accuracy-1; //-1 is needed to make this line up with expected usage
 					player.form = form-1; //-1 is needed to make this line up with expected usage
 					player.injury = injury_resistance-1; //-1 is needed to make this line up with expected usage
-					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
-					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
-					player.finish = !finishing * base_stat + !!finishing * finishing;
-					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
-					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
-					player.header = !header * base_stat + !!header * header;
-					player.swerve = !curl * base_stat + !!curl * curl;
-					player.catching = !catching * base_stat + !!catching * catching;
-					player.clearing = !clearing * base_stat + !!clearing * clearing;
-					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
-					player.body_ctrl = !balance * base_stat + !!balance * balance;
-					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
-					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
-					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
-					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
-					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
-					player.jump = !jump * base_stat + !!jump * jump;
-					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
-					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
-					player.stamina = !stamina * base_stat + !!stamina * stamina;
-					player.speed = !speed * base_stat + !!speed * speed;
-					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
-					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
-					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
-					player.aggres = !aggression * base_stat + !!aggression * aggression;
+					player.drib = base_stat + dribbling_bonus + full_stat_array_playstyle_buff[player.play_style][2];
+					player.gk = base_stat + gk_awareness_bonus + full_stat_array_playstyle_buff[player.play_style][18];
+					player.finish = base_stat + finishing_bonus + full_stat_array_playstyle_buff[player.play_style][5];
+					player.lowpass = base_stat + low_pass_bonus + full_stat_array_playstyle_buff[player.play_style][3];
+					player.loftpass = base_stat + lofted_pass_bonus + full_stat_array_playstyle_buff[player.play_style][4];
+					player.header = base_stat + header_bonus + full_stat_array_playstyle_buff[player.play_style][8];
+					player.swerve = base_stat + curl_bonus + full_stat_array_playstyle_buff[player.play_style][7];
+					player.catching = base_stat + catching_bonus + full_stat_array_playstyle_buff[player.play_style][20];
+					player.clearing = base_stat + clearing_bonus + full_stat_array_playstyle_buff[player.play_style][19];
+					player.reflex = base_stat + reflexes_bonus + full_stat_array_playstyle_buff[player.play_style][21];
+					player.body_ctrl = base_stat + balance_bonus + full_stat_array_playstyle_buff[player.play_style][14];
+					player.phys_cont = base_stat + physical_contact_bonus + full_stat_array_playstyle_buff[player.play_style][15];
+					player.kick_pwr = base_stat + kicking_power_bonus + full_stat_array_playstyle_buff[player.play_style][11];
+					player.exp_pwr = base_stat + acceleration_bonus + full_stat_array_playstyle_buff[player.play_style][13];
+					player.ball_ctrl = base_stat + ball_control_bonus + full_stat_array_playstyle_buff[player.play_style][1];
+					player.ball_win = base_stat + ball_winning_bonus + full_stat_array_playstyle_buff[player.play_style][10];
+					player.jump = base_stat + jump_bonus + full_stat_array_playstyle_buff[player.play_style][16];
+					player.cover = base_stat + gk_reach_bonus + full_stat_array_playstyle_buff[player.play_style][22];
+					player.place_kick = base_stat + place_kicking_bonus + full_stat_array_playstyle_buff[player.play_style][6];
+					player.stamina = base_stat + stamina_bonus + full_stat_array_playstyle_buff[player.play_style][17];
+					player.speed = base_stat + speed_bonus + full_stat_array_playstyle_buff[player.play_style][12];
+					player.atk = base_stat + offensive_awareness_bonus + full_stat_array_playstyle_buff[player.play_style][0];
+					player.def = base_stat + defensive_awareness_bonus + full_stat_array_playstyle_buff[player.play_style][9];
+					player.tight_pos = base_stat + tight_possession_bonus + full_stat_array_playstyle_buff[player.play_style][23];
+					player.aggres = base_stat + aggression_bonus + full_stat_array_playstyle_buff[player.play_style][24];
 				}
 				else if (wcsncmp(player.name, L"c51bbc4ff", 10) == 0) //name starts with silver color, assume this player is a silver
 				{
@@ -6034,31 +6017,31 @@ void update_squad(HWND hwnd)
 					player.weak_acc = weak_foot_accuracy - 1; //-1 is needed to make this line up with expected usage
 					player.form = form - 1; //-1 is needed to make this line up with expected usage
 					player.injury = injury_resistance - 1; //-1 is needed to make this line up with expected usage
-					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
-					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
-					player.finish = !finishing * base_stat + !!finishing * finishing;
-					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
-					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
-					player.header = !header * base_stat + !!header * header;
-					player.swerve = !curl * base_stat + !!curl * curl;
-					player.catching = !catching * base_stat + !!catching * catching;
-					player.clearing = !clearing * base_stat + !!clearing * clearing;
-					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
-					player.body_ctrl = !balance * base_stat + !!balance * balance;
-					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
-					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
-					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
-					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
-					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
-					player.jump = !jump * base_stat + !!jump * jump;
-					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
-					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
-					player.stamina = !stamina * base_stat + !!stamina * stamina;
-					player.speed = !speed * base_stat + !!speed * speed;
-					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
-					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
-					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
-					player.aggres = !aggression * base_stat + !!aggression * aggression;
+					player.drib = base_stat + dribbling_bonus;
+					player.gk = base_stat + gk_awareness_bonus;
+					player.finish = base_stat + finishing_bonus;
+					player.lowpass = base_stat + low_pass_bonus;
+					player.loftpass = base_stat + lofted_pass_bonus;
+					player.header = base_stat + header_bonus;
+					player.swerve = base_stat + curl_bonus;
+					player.catching = base_stat + catching_bonus;
+					player.clearing = base_stat + clearing_bonus;
+					player.reflex = base_stat + reflexes_bonus;
+					player.body_ctrl = base_stat + balance_bonus;
+					player.phys_cont = base_stat + physical_contact_bonus;
+					player.kick_pwr = base_stat + kicking_power_bonus;
+					player.exp_pwr = base_stat + acceleration_bonus;
+					player.ball_ctrl = base_stat + ball_control_bonus;
+					player.ball_win = base_stat + ball_winning_bonus;
+					player.jump = base_stat + jump_bonus;
+					player.cover = base_stat + gk_reach_bonus;
+					player.place_kick = base_stat + place_kicking_bonus;
+					player.stamina = base_stat + stamina_bonus;
+					player.speed = base_stat + speed_bonus;
+					player.atk = base_stat + offensive_awareness_bonus;
+					player.def = base_stat + defensive_awareness_bonus;
+					player.tight_pos = base_stat + tight_possession_bonus;
+					player.aggres = base_stat + aggression_bonus;
 				}
 				else if (player.reg_pos == 0) //player is a gk
 				{
@@ -6068,31 +6051,31 @@ void update_squad(HWND hwnd)
 					player.weak_acc = weak_foot_accuracy - 1; //-1 is needed to make this line up with expected usage
 					player.form = gk_form-1; //gk, so use gk form, -1 is needed to make this line up with expected usage
 					player.injury = injury_resistance - 1; //-1 is needed to make this line up with expected usage
-					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
-					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
-					player.finish = !finishing * base_stat + !!finishing * finishing;
-					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
-					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
-					player.header = !header * base_stat + !!header * header;
-					player.swerve = !curl * base_stat + !!curl * curl;
-					player.catching = !catching * base_stat + !!catching * catching;
-					player.clearing = !clearing * base_stat + !!clearing * clearing;
-					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
-					player.body_ctrl = !balance * base_stat + !!balance * balance;
-					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
-					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
-					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
-					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
-					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
-					player.jump = !jump * base_stat + !!jump * jump;
-					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
-					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
-					player.stamina = !stamina * base_stat + !!stamina * stamina;
-					player.speed = !speed * base_stat + !!speed * speed;
-					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
-					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
-					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
-					player.aggres = !aggression * base_stat + !!aggression * aggression;
+					player.drib = base_stat + dribbling_bonus;
+					player.gk = base_stat + gk_awareness_bonus;
+					player.finish = base_stat + finishing_bonus;
+					player.lowpass = base_stat + low_pass_bonus;
+					player.loftpass = base_stat + lofted_pass_bonus;
+					player.header = base_stat + header_bonus;
+					player.swerve = base_stat + curl_bonus;
+					player.catching = base_stat + catching_bonus;
+					player.clearing = base_stat + clearing_bonus;
+					player.reflex = base_stat + reflexes_bonus;
+					player.body_ctrl = base_stat + balance_bonus;
+					player.phys_cont = base_stat + physical_contact_bonus;
+					player.kick_pwr = base_stat + kicking_power_bonus;
+					player.exp_pwr = base_stat + acceleration_bonus;
+					player.ball_ctrl = base_stat + ball_control_bonus;
+					player.ball_win = base_stat + ball_winning_bonus;
+					player.jump = base_stat + jump_bonus;
+					player.cover = base_stat + gk_reach_bonus;
+					player.place_kick = base_stat + place_kicking_bonus;
+					player.stamina = base_stat + stamina_bonus;
+					player.speed = base_stat + speed_bonus;
+					player.atk = base_stat + offensive_awareness_bonus;
+					player.def = base_stat + defensive_awareness_bonus;
+					player.tight_pos = base_stat + tight_possession_bonus;
+					player.aggres = base_stat + aggression_bonus;
 				}
 				else if (player.height == buffed_height) //buffed player
 				{
@@ -6108,33 +6091,37 @@ void update_squad(HWND hwnd)
 						player.weak_acc = weak_foot_accuracy_debuff -1; //-1 is needed to make this line up with expected usage
 					}
 					*/
+					if (player.play_pos[9] == 2) //A position at CB
+					{
+						player.play_pos[9] = 1; //change it to a B position
+					}
 					player.form = form - 1; //-1 is needed to make this line up with expected usage
 					player.injury = injury_resistance - 1; //-1 is needed to make this line up with expected usage
-					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
-					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
-					player.finish = !finishing * base_stat + !!finishing * finishing;
-					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
-					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
-					player.header = !header * base_stat + !!header * header;
-					player.swerve = !curl * base_stat + !!curl * curl;
-					player.catching = !catching * base_stat + !!catching * catching;
-					player.clearing = !clearing * base_stat + !!clearing * clearing;
-					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
-					player.body_ctrl = !balance * base_stat + !!balance * balance;
-					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
-					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
-					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
-					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
-					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
-					player.jump = !jump * base_stat + !!jump * jump;
-					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
-					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
-					player.stamina = !stamina * base_stat + !!stamina * stamina;
-					player.speed = !speed * base_stat + !!speed * speed;
-					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
-					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
-					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
-					player.aggres = !aggression * base_stat + !!aggression * aggression;
+					player.drib = base_stat + dribbling_bonus;
+					player.gk = base_stat + gk_awareness_bonus;
+					player.finish = base_stat + finishing_bonus;
+					player.lowpass = base_stat + low_pass_bonus;
+					player.loftpass = base_stat + lofted_pass_bonus;
+					player.header = base_stat + header_bonus;
+					player.swerve = base_stat + curl_bonus;
+					player.catching = base_stat + catching_bonus;
+					player.clearing = base_stat + clearing_bonus;
+					player.reflex = base_stat + reflexes_bonus;
+					player.body_ctrl = base_stat + balance_bonus;
+					player.phys_cont = base_stat + physical_contact_bonus;
+					player.kick_pwr = base_stat + kicking_power_bonus;
+					player.exp_pwr = base_stat + acceleration_bonus;
+					player.ball_ctrl = base_stat + ball_control_bonus;
+					player.ball_win = base_stat + ball_winning_bonus;
+					player.jump = base_stat + jump_bonus;
+					player.cover = base_stat + gk_reach_bonus;
+					player.place_kick = base_stat + place_kicking_bonus;
+					player.stamina = base_stat + stamina_bonus;
+					player.speed = base_stat + speed_bonus;
+					player.atk = base_stat + offensive_awareness_bonus;
+					player.def = base_stat + defensive_awareness_bonus;
+					player.tight_pos = base_stat + tight_possession_bonus;
+					player.aggres = base_stat + aggression_bonus;
 				}
 				else //this is a nonmedal, also a failsafe to make sure all players get updated
 				{
@@ -6144,31 +6131,31 @@ void update_squad(HWND hwnd)
 					player.weak_acc = weak_foot_accuracy - 1; //-1 is needed to make this line up with expected usage
 					player.form = form - 1; //-1 is needed to make this line up with expected usage
 					player.injury = injury_resistance - 1; //-1 is needed to make this line up with expected usage
-					player.drib = !dribbling * base_stat + !!dribbling * dribbling; //sets stat to base stat if dribbling is 0, or equal to dribbling if it's not 0
-					player.gk = !gk_awareness * base_stat + !!gk_awareness * gk_awareness;
-					player.finish = !finishing * base_stat + !!finishing * finishing;
-					player.lowpass = !low_pass * base_stat + !!low_pass * low_pass;
-					player.loftpass = !lofted_pass * base_stat + !!lofted_pass * lofted_pass;
-					player.header = !header * base_stat + !!header * header;
-					player.swerve = !curl * base_stat + !!curl * curl;
-					player.catching = !catching * base_stat + !!catching * catching;
-					player.clearing = !clearing * base_stat + !!clearing * clearing;
-					player.reflex = !reflexes * base_stat + !!reflexes * reflexes;
-					player.body_ctrl = !balance * base_stat + !!balance * balance;
-					player.phys_cont = !physical_contact * base_stat + !!physical_contact * physical_contact;
-					player.kick_pwr = !kicking_power * base_stat + !!kicking_power * kicking_power;
-					player.exp_pwr = !acceleration * base_stat + !!acceleration * acceleration;
-					player.ball_ctrl = !ball_control * base_stat + !!ball_control * ball_control;
-					player.ball_win = !ball_winning * base_stat + !!ball_winning * ball_winning;
-					player.jump = !jump * base_stat + !!jump * jump;
-					player.cover = !gk_reach * base_stat + !!gk_reach * gk_reach;
-					player.place_kick = !place_kicking * base_stat + !!place_kicking * place_kicking;
-					player.stamina = !stamina * base_stat + !!stamina * stamina;
-					player.speed = !speed * base_stat + !!speed * speed;
-					player.atk = !offensive_awareness * base_stat + !!offensive_awareness * offensive_awareness;
-					player.def = !defensive_awareness * base_stat + !!defensive_awareness * defensive_awareness;
-					player.tight_pos = !tight_possession * base_stat + !!tight_possession * tight_possession;
-					player.aggres = !aggression * base_stat + !!aggression * aggression;
+					player.drib = base_stat + dribbling_bonus;
+					player.gk = base_stat + gk_awareness_bonus;
+					player.finish = base_stat + finishing_bonus;
+					player.lowpass = base_stat + low_pass_bonus;
+					player.loftpass = base_stat + lofted_pass_bonus;
+					player.header = base_stat + header_bonus;
+					player.swerve = base_stat + curl_bonus;
+					player.catching = base_stat + catching_bonus;
+					player.clearing = base_stat + clearing_bonus;
+					player.reflex = base_stat + reflexes_bonus;
+					player.body_ctrl = base_stat + balance_bonus;
+					player.phys_cont = base_stat + physical_contact_bonus;
+					player.kick_pwr = base_stat + kicking_power_bonus;
+					player.exp_pwr = base_stat + acceleration_bonus;
+					player.ball_ctrl = base_stat + ball_control_bonus;
+					player.ball_win = base_stat + ball_winning_bonus;
+					player.jump = base_stat + jump_bonus;
+					player.cover = base_stat + gk_reach_bonus;
+					player.place_kick = base_stat + place_kicking_bonus;
+					player.stamina = base_stat + stamina_bonus;
+					player.speed = base_stat + speed_bonus;
+					player.atk = base_stat + offensive_awareness_bonus;
+					player.def = base_stat + defensive_awareness_bonus;
+					player.tight_pos = base_stat + tight_possession_bonus;
+					player.aggres = base_stat + aggression_bonus;
 				}
 				player.play_skill[21] = 1; //make sure malicia is on
 				player_export updated_player = player.PlayerExport();

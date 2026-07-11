@@ -341,14 +341,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			if (player.play_pos[jj] == 2)
 				countA++;
 		}
-
-		//Count B positions
-		int countB = 0;
-		for (int jj = 0; jj < 13; jj++)
-		{
-			if (player.play_pos[jj] == 1)
-				countB++;
-		}
+		int countB = 0; //used within player types
 
 		//Can't have GK as second A
         if(countA > 1)
@@ -371,12 +364,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			errorTot++;
 			errorMsg << _T("No C position allowed on outfielders outside of GK position; ");
 		}*/
-
-		if (countB > 0)
-		{
-			errorTot++;
-			errorMsg << _T("No B position allowed; ");
-		}
+		
 
 		//if (player.play_style == 2 && player.play_pos[1] == 2)
 		//{
@@ -476,7 +464,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 					numTrick++;
 				}
                 //Trick cards may be free, count number
-                if(jj == 2 || jj == 34 || jj == 28 || jj == 16 || jj == 9 || jj == 11 || jj == 32 || jj == 33 || jj == 6 || jj == 21)
+                if(jj == 34 || jj == 28 || jj == 16 || jj == 9 || jj == 11 || jj == 32 || jj == 33 || jj == 6 || jj == 21)
 				{
                     hasTrick = true;
 					numTrick++;
@@ -548,6 +536,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			cardMin = regSkillCardsMin;
 
 			weakFoot = weak_foot_usage;
+			//Count B positions
+			for (int jj = 0; jj < 13; jj++)
+			{
+				if (player.play_pos[jj] == 1)
+					countB++;
+			}
+			if (countB > 0)
+			{
+				errorTot++;
+				errorMsg << _T("Illegal B positions, only allowed on 188cm players at CB; ");
+			}
 
 			if (wcsncmp(player.name, L"ccc9900ff", 10) == 0 || wcsncmp(player.name, L"c51bbc4ff", 10) == 0) //name starts with gold or silver color
 			{
@@ -555,133 +554,32 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				errorMsg << _T("Player name has gold or silver color but isn't a medal; ");
 			}
 
-			//set the targets to the namespace values. note some of these are 0 as they should be base rate
-			targetDrib = dribbling;
-			targetGk = gk_awareness;
-			targetFinish = finishing;
-			targetLowpass = low_pass;
-			targetLoftpass = lofted_pass;
-			targetHeader = header;
-			targetSwerve = curl;
-			targetCatching = catching;
-			targetClearing = clearing;
-			targetReflex = reflexes;
-			targetBody_ctrl = balance;
-			targetPhys_cont = physical_contact;
-			targetKick_pwr = kicking_power;
-			targetExp_pwr = acceleration;
-			targetBall_ctrl = ball_control;
-			targetBall_win = ball_winning;
-			targetJump = jump;
-			targetCover = gk_reach;
-			targetPlace_kick = place_kicking;
-			targetStamina = stamina;
-			targetSpeed = speed;
-			targetAtk = offensive_awareness;
-			targetDef = defensive_awareness;
-			targetTight_pos = tight_possession;
-			targetAggres = aggression;
-			//fix all the 0 values and make them the base rate
-			if (targetDrib == 0)
-			{
-				targetDrib = base_stat;
-			}
-			if (targetGk == 0)
-			{
-				targetGk = base_stat;
-			}
-			if (targetFinish == 0)
-			{
-				targetFinish = base_stat;
-			}
-			if (targetLowpass == 0)
-			{
-				targetLowpass = base_stat;
-			}
-			if (targetLoftpass == 0)
-			{
-				targetLoftpass = base_stat;
-			}
-			if (targetHeader == 0)
-			{
-				targetHeader = base_stat;
-			}
-			if (targetSwerve == 0)
-			{
-				targetSwerve = base_stat;
-			}
-			if (targetCatching == 0)
-			{
-				targetCatching = base_stat;
-			}
-			if (targetClearing == 0)
-			{
-				targetClearing = base_stat;
-			}
-			if (targetReflex == 0)
-			{
-				targetReflex = base_stat;
-			}
-			if (targetBody_ctrl == 0)
-			{
-				targetBody_ctrl = base_stat;
-			}
-			if (targetPhys_cont == 0)
-			{
-				targetPhys_cont = base_stat;
-			}
-			if (targetKick_pwr == 0)
-			{
-				targetKick_pwr = base_stat;
-			}
-			if (targetExp_pwr == 0)
-			{
-				targetExp_pwr = base_stat;
-			}
-			if (targetBall_ctrl == 0)
-			{
-				targetBall_ctrl = base_stat;
-			}
-			if (targetBall_win == 0)
-			{
-				targetBall_win = base_stat;
-			}
-			if (targetJump == 0)
-			{
-				targetJump = base_stat;
-			}
-			if (targetCover == 0)
-			{
-				targetCover = base_stat;
-			}
-			if (targetPlace_kick == 0)
-			{
-				targetPlace_kick = base_stat;
-			}
-			if (targetStamina == 0)
-			{
-				targetStamina = base_stat;
-			}
-			if (targetSpeed == 0)
-			{
-				targetSpeed = base_stat;
-			}
-			if (targetAtk == 0)
-			{
-				targetAtk = base_stat;
-			}
-			if (targetDef == 0)
-			{
-				targetDef = base_stat;
-			}
-			if (targetTight_pos == 0)
-			{
-				targetTight_pos = base_stat;
-			}
-			if (targetAggres == 0)
-			{
-				targetAggres = base_stat;
-			}
+			//set the targets to the base stat+bonus
+			targetDrib = base_stat + dribbling_bonus;
+			targetGk = base_stat + gk_awareness_bonus;
+			targetFinish = base_stat + finishing_bonus;
+			targetLowpass = base_stat + low_pass_bonus;
+			targetLoftpass = base_stat + lofted_pass_bonus;
+			targetHeader = base_stat + header_bonus;
+			targetSwerve = base_stat + curl_bonus;
+			targetCatching = base_stat + catching_bonus;
+			targetClearing = base_stat + clearing_bonus;
+			targetReflex = base_stat + reflexes_bonus;
+			targetBody_ctrl = base_stat + balance_bonus;
+			targetPhys_cont = base_stat + physical_contact_bonus;
+			targetKick_pwr = base_stat + kicking_power_bonus;
+			targetExp_pwr = base_stat + acceleration_bonus;
+			targetBall_ctrl = base_stat + ball_control_bonus;
+			targetBall_win = base_stat + ball_winning_bonus;
+			targetJump = base_stat + jump_bonus;
+			targetCover = base_stat + gk_reach_bonus;
+			targetPlace_kick = base_stat + place_kicking_bonus;
+			targetStamina = base_stat + stamina_bonus;
+			targetSpeed = base_stat + speed_bonus;
+			targetAtk = base_stat + offensive_awareness_bonus;
+			targetDef = base_stat + defensive_awareness_bonus;
+			targetTight_pos = base_stat + tight_possession_bonus;
+			targetAggres = base_stat + aggression_bonus;
 
 			freeAPositions = free_a;
 
@@ -755,139 +653,49 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				weakFoot = weak_foot_usage_debuff;
 			}
 			*/
+			//Count B positions
+			for (int jj = 0; jj < 13; jj++)
+			{
+				if (player.play_pos[jj] == 1)
+					countB++;
+			}
+			if (countB - player.play_pos[9] > 0) //B position at CB is ok
+			{
+				errorTot++;
+				errorMsg << _T("Illegal B positions, only allowed on 188cm players at CB; ");
+			}
 			if (wcsncmp(player.name, L"ccc9900ff", 10) == 0 || wcsncmp(player.name, L"c51bbc4ff", 10) == 0) //name starts with gold or silver color
 			{
 				errorTot++;
 				errorMsg << _T("Player name has gold or silver color but isn't a medal; ");
 			}
 
-			//set the targets to the namespace values. note some of these are 0 as they should be base rate
-			targetDrib = dribbling;
-			targetGk = gk_awareness;
-			targetFinish = finishing;
-			targetLowpass = low_pass;
-			targetLoftpass = lofted_pass;
-			targetHeader = header;
-			targetSwerve = curl;
-			targetCatching = catching;
-			targetClearing = clearing;
-			targetReflex = reflexes;
-			targetBody_ctrl = balance;
-			targetPhys_cont = physical_contact;
-			targetKick_pwr = kicking_power;
-			targetExp_pwr = acceleration;
-			targetBall_ctrl = ball_control;
-			targetBall_win = ball_winning;
-			targetJump = jump;
-			targetCover = gk_reach;
-			targetPlace_kick = place_kicking;
-			targetStamina = stamina;
-			targetSpeed = speed;
-			targetAtk = offensive_awareness;
-			targetDef = defensive_awareness;
-			targetTight_pos = tight_possession;
-			targetAggres = aggression;
-			//fix all the 0 values and make them the base rate
-			if (targetDrib == 0)
-			{
-				targetDrib = base_stat;
-			}
-			if (targetGk == 0)
-			{
-				targetGk = base_stat;
-			}
-			if (targetFinish == 0)
-			{
-				targetFinish = base_stat;
-			}
-			if (targetLowpass == 0)
-			{
-				targetLowpass = base_stat;
-			}
-			if (targetLoftpass == 0)
-			{
-				targetLoftpass = base_stat;
-			}
-			if (targetHeader == 0)
-			{
-				targetHeader = base_stat;
-			}
-			if (targetSwerve == 0)
-			{
-				targetSwerve = base_stat;
-			}
-			if (targetCatching == 0)
-			{
-				targetCatching = base_stat;
-			}
-			if (targetClearing == 0)
-			{
-				targetClearing = base_stat;
-			}
-			if (targetReflex == 0)
-			{
-				targetReflex = base_stat;
-			}
-			if (targetBody_ctrl == 0)
-			{
-				targetBody_ctrl = base_stat;
-			}
-			if (targetPhys_cont == 0)
-			{
-				targetPhys_cont = base_stat;
-			}
-			if (targetKick_pwr == 0)
-			{
-				targetKick_pwr = base_stat;
-			}
-			if (targetExp_pwr == 0)
-			{
-				targetExp_pwr = base_stat;
-			}
-			if (targetBall_ctrl == 0)
-			{
-				targetBall_ctrl = base_stat;
-			}
-			if (targetBall_win == 0)
-			{
-				targetBall_win = base_stat;
-			}
-			if (targetJump == 0)
-			{
-				targetJump = base_stat;
-			}
-			if (targetCover == 0)
-			{
-				targetCover = base_stat;
-			}
-			if (targetPlace_kick == 0)
-			{
-				targetPlace_kick = base_stat;
-			}
-			if (targetStamina == 0)
-			{
-				targetStamina = base_stat;
-			}
-			if (targetSpeed == 0)
-			{
-				targetSpeed = base_stat;
-			}
-			if (targetAtk == 0)
-			{
-				targetAtk = base_stat;
-			}
-			if (targetDef == 0)
-			{
-				targetDef = base_stat;
-			}
-			if (targetTight_pos == 0)
-			{
-				targetTight_pos = base_stat;
-			}
-			if (targetAggres == 0)
-			{
-				targetAggres = base_stat;
-			}
+			//set the targets to the base stat+bonus
+			targetDrib = base_stat + dribbling_bonus;
+			targetGk = base_stat + gk_awareness_bonus;
+			targetFinish = base_stat + finishing_bonus;
+			targetLowpass = base_stat + low_pass_bonus;
+			targetLoftpass = base_stat + lofted_pass_bonus;
+			targetHeader = base_stat + header_bonus;
+			targetSwerve = base_stat + curl_bonus;
+			targetCatching = base_stat + catching_bonus;
+			targetClearing = base_stat + clearing_bonus;
+			targetReflex = base_stat + reflexes_bonus;
+			targetBody_ctrl = base_stat + balance_bonus;
+			targetPhys_cont = base_stat + physical_contact_bonus;
+			targetKick_pwr = base_stat + kicking_power_bonus;
+			targetExp_pwr = base_stat + acceleration_bonus;
+			targetBall_ctrl = base_stat + ball_control_bonus;
+			targetBall_win = base_stat + ball_winning_bonus;
+			targetJump = base_stat + jump_bonus;
+			targetCover = base_stat + gk_reach_bonus;
+			targetPlace_kick = base_stat + place_kicking_bonus;
+			targetStamina = base_stat + stamina_bonus;
+			targetSpeed = base_stat + speed_bonus;
+			targetAtk = base_stat + offensive_awareness_bonus;
+			targetDef = base_stat + defensive_awareness_bonus;
+			targetTight_pos = base_stat + tight_possession_bonus;
+			targetAggres = base_stat + aggression_bonus;
 
 			freeAPositions = free_a;
 
@@ -918,12 +726,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				errorMsg << _T("Only LB, RB, DMF, LMF, RMF, CMF, AMF, or SS registered position players can be buffed; ");
 			}
 			*/
-			if (player.play_pos[9] == 2 || player.play_pos[12] == 2)
+			if (player.play_pos[9] == 2)
 			{
 				errorTot++;
-				errorMsg << _T("188cm players may not have an A-position at CB or GK; ");
+				errorMsg << _T("188cm players may not have an A-position at CB, it must be downgraded to a B position; ");
 			}
-			else if (player.reg_pos != 0 && player.form + 1 != form)
+			if (player.play_pos[12] == 2)
+			{
+				errorTot++;
+				errorMsg << _T("188cm players may not have an A-position at GK; ");
+			}
+			if (player.reg_pos != 0 && player.form + 1 != form)
 			{
 				errorTot++;
 				errorMsg << _T("Form is ") << player.form + 1 << _T(", should be ") << form << _T("; ");
@@ -962,7 +775,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			}*/
 		}
 		/* SILVER */
-        else if(player.height == silver::height && player.swerve == !silver::curl * silver::base_stat + !!silver::curl * silver::curl) //Silver player, 2nd part is checking curl. =silver::base_stat if silver::curl=0, or =silver::curl if it's not 0
+        else if(player.height == silver::height && player.swerve == silver::base_stat+silver::curl_bonus) //Silver player, 2nd part is checking curl.
         {
 			using namespace silver; //all stats pulled from silver namespace
 			isSilver = true;
@@ -971,6 +784,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			cardMin = medalSkillCardsMin;
 
 			weakFoot = weak_foot_usage;
+			//Count B positions
+			for (int jj = 0; jj < 13; jj++)
+			{
+				if (player.play_pos[jj] == 1)
+					countB++;
+			}
+			if (countB > 0)
+			{
+				errorTot++;
+				errorMsg << _T("Illegal B positions, only allowed on 188cm players at CB; ");
+			}
 
 			if (wcsncmp(player.name, L"c51bbc4ff", 10) != 0)
 			{
@@ -978,133 +802,32 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				errorMsg << _T("Player name is missing silver color; ");
 			}
 
-			//set the targets to the namespace values. note some of these are 0 as they should be base rate
-			targetDrib = dribbling;
-			targetGk = gk_awareness;
-			targetFinish = finishing;
-			targetLowpass = low_pass;
-			targetLoftpass = lofted_pass;
-			targetHeader = header;
-			targetSwerve = curl;
-			targetCatching = catching;
-			targetClearing = clearing;
-			targetReflex = reflexes;
-			targetBody_ctrl = balance;
-			targetPhys_cont = physical_contact;
-			targetKick_pwr = kicking_power;
-			targetExp_pwr = acceleration;
-			targetBall_ctrl = ball_control;
-			targetBall_win = ball_winning;
-			targetJump = jump;
-			targetCover = gk_reach;
-			targetPlace_kick = place_kicking;
-			targetStamina = stamina;
-			targetSpeed = speed;
-			targetAtk = offensive_awareness;
-			targetDef = defensive_awareness;
-			targetTight_pos = tight_possession;
-			targetAggres = aggression;
-			//fix all the 0 values and make them the base rate
-			if (targetDrib == 0)
-			{
-				targetDrib = base_stat;
-			}
-			if (targetGk == 0)
-			{
-				targetGk = base_stat;
-			}
-			if (targetFinish == 0)
-			{
-				targetFinish = base_stat;
-			}
-			if (targetLowpass == 0)
-			{
-				targetLowpass = base_stat;
-			}
-			if (targetLoftpass == 0)
-			{
-				targetLoftpass = base_stat;
-			}
-			if (targetHeader == 0)
-			{
-				targetHeader = base_stat;
-			}
-			if (targetSwerve == 0)
-			{
-				targetSwerve = base_stat;
-			}
-			if (targetCatching == 0)
-			{
-				targetCatching = base_stat;
-			}
-			if (targetClearing == 0)
-			{
-				targetClearing = base_stat;
-			}
-			if (targetReflex == 0)
-			{
-				targetReflex = base_stat;
-			}
-			if (targetBody_ctrl == 0)
-			{
-				targetBody_ctrl = base_stat;
-			}
-			if (targetPhys_cont == 0)
-			{
-				targetPhys_cont = base_stat;
-			}
-			if (targetKick_pwr == 0)
-			{
-				targetKick_pwr = base_stat;
-			}
-			if (targetExp_pwr == 0)
-			{
-				targetExp_pwr = base_stat;
-			}
-			if (targetBall_ctrl == 0)
-			{
-				targetBall_ctrl = base_stat;
-			}
-			if (targetBall_win == 0)
-			{
-				targetBall_win = base_stat;
-			}
-			if (targetJump == 0)
-			{
-				targetJump = base_stat;
-			}
-			if (targetCover == 0)
-			{
-				targetCover = base_stat;
-			}
-			if (targetPlace_kick == 0)
-			{
-				targetPlace_kick = base_stat;
-			}
-			if (targetStamina == 0)
-			{
-				targetStamina = base_stat;
-			}
-			if (targetSpeed == 0)
-			{
-				targetSpeed = base_stat;
-			}
-			if (targetAtk == 0)
-			{
-				targetAtk = base_stat;
-			}
-			if (targetDef == 0)
-			{
-				targetDef = base_stat;
-			}
-			if (targetTight_pos == 0)
-			{
-				targetTight_pos = base_stat;
-			}
-			if (targetAggres == 0)
-			{
-				targetAggres = base_stat;
-			}
+			//set the targets to the base stat+bonus
+			targetDrib = base_stat + dribbling_bonus;
+			targetGk = base_stat + gk_awareness_bonus;
+			targetFinish = base_stat + finishing_bonus;
+			targetLowpass = base_stat + low_pass_bonus;
+			targetLoftpass = base_stat + lofted_pass_bonus;
+			targetHeader = base_stat + header_bonus;
+			targetSwerve = base_stat + curl_bonus;
+			targetCatching = base_stat + catching_bonus;
+			targetClearing = base_stat + clearing_bonus;
+			targetReflex = base_stat + reflexes_bonus;
+			targetBody_ctrl = base_stat + balance_bonus;
+			targetPhys_cont = base_stat + physical_contact_bonus;
+			targetKick_pwr = base_stat + kicking_power_bonus;
+			targetExp_pwr = base_stat + acceleration_bonus;
+			targetBall_ctrl = base_stat + ball_control_bonus;
+			targetBall_win = base_stat + ball_winning_bonus;
+			targetJump = base_stat + jump_bonus;
+			targetCover = base_stat + gk_reach_bonus;
+			targetPlace_kick = base_stat + place_kicking_bonus;
+			targetStamina = base_stat + stamina_bonus;
+			targetSpeed = base_stat + speed_bonus;
+			targetAtk = base_stat + offensive_awareness_bonus;
+			targetDef = base_stat + defensive_awareness_bonus;
+			targetTight_pos = base_stat + tight_possession_bonus;
+			targetAggres = base_stat + aggression_bonus;
 
 			freeAPositions = free_a;
 
@@ -1165,7 +888,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			}*/
         }
 		/* GOLD */
-        else if (player.height == gold::height && player.swerve == !gold::curl * gold::base_stat + !!gold::curl * gold::curl) //Gold player, 2nd part is checking curl. =gold::base_stat if gold::curl=0, or =gold::curl if it's not 0
+        else if (player.height == gold::height && player.swerve == gold::base_stat+gold::curl_bonus) //Gold player, 2nd part is checking curl.
         {
 			using namespace gold;
 			isGold = true;
@@ -1174,6 +897,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			cardMin = medalSkillCardsMin;
 
 			weakFoot = weak_foot_usage;
+			//Count B positions
+			for (int jj = 0; jj < 13; jj++)
+			{
+				if (player.play_pos[jj] == 1)
+					countB++;
+			}
+			if (countB > 0)
+			{
+				errorTot++;
+				errorMsg << _T("Illegal B positions, only allowed on 188cm players at CB; ");
+			}
 
 			if (wcsncmp(player.name, L"ccc9900ff", 10) != 0)
 			{
@@ -1201,133 +935,34 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				errorTot++;
 				errorMsg << _T("Only 2 A positions for medals;");
 			}*/
-			//set the targets to the namespace values. note some of these are 0 as they should be base rate
-			targetDrib = dribbling;
-			targetGk = gk_awareness;
-			targetFinish = finishing;
-			targetLowpass = low_pass;
-			targetLoftpass = lofted_pass;
-			targetHeader = header;
-			targetSwerve = curl;
-			targetCatching = catching;
-			targetClearing = clearing;
-			targetReflex = reflexes;
-			targetBody_ctrl = balance;
-			targetPhys_cont = physical_contact;
-			targetKick_pwr = kicking_power;
-			targetExp_pwr = acceleration;
-			targetBall_ctrl = ball_control;
-			targetBall_win = ball_winning;
-			targetJump = jump;
-			targetCover = gk_reach;
-			targetPlace_kick = place_kicking;
-			targetStamina = stamina;
-			targetSpeed = speed;
-			targetAtk = offensive_awareness;
-			targetDef = defensive_awareness;
-			targetTight_pos = tight_possession;
-			targetAggres = aggression;
-			//fix all the 0 values and make them the base rate
-			if (targetDrib == 0)
-			{
-				targetDrib = base_stat;
-			}
-			if (targetGk == 0)
-			{
-				targetGk = base_stat;
-			}
-			if (targetFinish == 0)
-			{
-				targetFinish = base_stat;
-			}
-			if (targetLowpass == 0)
-			{
-				targetLowpass = base_stat;
-			}
-			if (targetLoftpass == 0)
-			{
-				targetLoftpass = base_stat;
-			}
-			if (targetHeader == 0)
-			{
-				targetHeader = base_stat;
-			}
-			if (targetSwerve == 0)
-			{
-				targetSwerve = base_stat;
-			}
-			if (targetCatching == 0)
-			{
-				targetCatching = base_stat;
-			}
-			if (targetClearing == 0)
-			{
-				targetClearing = base_stat;
-			}
-			if (targetReflex == 0)
-			{
-				targetReflex = base_stat;
-			}
-			if (targetBody_ctrl == 0)
-			{
-				targetBody_ctrl = base_stat;
-			}
-			if (targetPhys_cont == 0)
-			{
-				targetPhys_cont = base_stat;
-			}
-			if (targetKick_pwr == 0)
-			{
-				targetKick_pwr = base_stat;
-			}
-			if (targetExp_pwr == 0)
-			{
-				targetExp_pwr = base_stat;
-			}
-			if (targetBall_ctrl == 0)
-			{
-				targetBall_ctrl = base_stat;
-			}
-			if (targetBall_win == 0)
-			{
-				targetBall_win = base_stat;
-			}
-			if (targetJump == 0)
-			{
-				targetJump = base_stat;
-			}
-			if (targetCover == 0)
-			{
-				targetCover = base_stat;
-			}
-			if (targetPlace_kick == 0)
-			{
-				targetPlace_kick = base_stat;
-			}
-			if (targetStamina == 0)
-			{
-				targetStamina = base_stat;
-			}
-			if (targetSpeed == 0)
-			{
-				targetSpeed = base_stat;
-			}
-			if (targetAtk == 0)
-			{
-				targetAtk = base_stat;
-			}
-			if (targetDef == 0)
-			{
-				targetDef = base_stat;
-			}
-			if (targetTight_pos == 0)
-			{
-				targetTight_pos = base_stat;
-			}
-			if (targetAggres == 0)
-			{
-				targetAggres = base_stat;
-			}
+			//set the targets to the base stat+bonus+playstyle bonuses
+			//currently only golds get playstyle bonuses
+			//maybe try to order these as they are in the editor
+			targetDrib = base_stat + dribbling_bonus + full_stat_array_playstyle_buff[player.play_style][2];
+			targetGk = base_stat + gk_awareness_bonus + full_stat_array_playstyle_buff[player.play_style][18];
+			targetFinish = base_stat + finishing_bonus + full_stat_array_playstyle_buff[player.play_style][5];
+			targetLowpass = base_stat + low_pass_bonus + full_stat_array_playstyle_buff[player.play_style][3];
+			targetLoftpass = base_stat + lofted_pass_bonus + full_stat_array_playstyle_buff[player.play_style][4];
+			targetHeader = base_stat + header_bonus + full_stat_array_playstyle_buff[player.play_style][8];
+			targetSwerve = base_stat + curl_bonus + full_stat_array_playstyle_buff[player.play_style][7];
+			targetCatching = base_stat + catching_bonus + full_stat_array_playstyle_buff[player.play_style][20];
+			targetClearing = base_stat + clearing_bonus + full_stat_array_playstyle_buff[player.play_style][19];
+			targetReflex = base_stat + reflexes_bonus + full_stat_array_playstyle_buff[player.play_style][21];
+			targetBody_ctrl = base_stat + balance_bonus + full_stat_array_playstyle_buff[player.play_style][14];
+			targetPhys_cont = base_stat + physical_contact_bonus + full_stat_array_playstyle_buff[player.play_style][15];
+			targetKick_pwr = base_stat + kicking_power_bonus + full_stat_array_playstyle_buff[player.play_style][11];
+			targetExp_pwr = base_stat + acceleration_bonus + full_stat_array_playstyle_buff[player.play_style][13];
+			targetBall_ctrl = base_stat + ball_control_bonus + full_stat_array_playstyle_buff[player.play_style][1];
+			targetBall_win = base_stat + ball_winning_bonus + full_stat_array_playstyle_buff[player.play_style][10];
+			targetJump = base_stat + jump_bonus + full_stat_array_playstyle_buff[player.play_style][16];
+			targetCover = base_stat + gk_reach_bonus + full_stat_array_playstyle_buff[player.play_style][22];
+			targetPlace_kick = base_stat + place_kicking_bonus + full_stat_array_playstyle_buff[player.play_style][6];
+			targetStamina = base_stat + stamina_bonus + full_stat_array_playstyle_buff[player.play_style][17];
+			targetSpeed = base_stat + speed_bonus + full_stat_array_playstyle_buff[player.play_style][12];
+			targetAtk = base_stat + offensive_awareness_bonus + full_stat_array_playstyle_buff[player.play_style][0];
+			targetDef = base_stat + defensive_awareness_bonus + full_stat_array_playstyle_buff[player.play_style][9];
+			targetTight_pos = base_stat + tight_possession_bonus + full_stat_array_playstyle_buff[player.play_style][23];
+			targetAggres = base_stat + aggression_bonus + full_stat_array_playstyle_buff[player.play_style][24];
 
 			freeAPositions = free_a;
 
@@ -1426,7 +1061,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		errorMsg << _T("Has ") << player.play_pos[11];RB
 		errorMsg << _T("Has ") << player.play_pos[12];GK*/
 
-		int cardsSwappedForAPositions = countA - freeAPositions;
+		int cardsSwappedForAPositions = countA + countB - freeAPositions;
 		bool usingNMWMFAPos = confirmedNMWMFBuff && (
 			(player.reg_pos == 6 && player.play_pos[2] == 2) ||
 			(player.reg_pos == 7 && player.play_pos[3] == 2) ||
@@ -1448,27 +1083,34 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			cardsSwappedForAPositions--;
 		}
 
-		if (countA > freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))))
+		if (countA + countB > freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))))
 		{
-			if (usingNMWMFAPos)
-			{
-				if (countA > freeAPositions + max(0, cardLimit - cardCount) + 1)
-				{
-					errorTot++;
-					errorMsg << _T("Has ") << countA << _T(" A positions, only allowed ") << freeAPositions + max(0, cardLimit - cardCount) + 1 << _T(". Remove cards to add A position slots; ");
-				}
-			}
-			else if (countA > freeAPositions + max(0, cardLimit - cardCount - max(0,((numCom-numTrickCom)-freeCOMs))))
+			if (countA + countB > freeAPositions + max(0, cardLimit - cardCount - max(0,((numCom-numTrickCom)-freeCOMs))))
 			{
 				if (max(0, ((numCom - numTrickCom) - freeCOMs)) == 0) //hasn't exchanged any skill cards for com styles
 				{
 					errorTot++;
-					errorMsg << _T("Has ") << countA << _T(" A positions, only allowed ") << freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))) << _T(". Remove non-free skill cards to add A position slots; ");
+					if (countB == 0)
+					{
+						errorMsg << _T("Has ") << countA << _T(" A positions, only allowed ") << freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))) << _T(". Remove non-free skill cards to add A position slots; ");
+					}
+					else
+					{
+						errorMsg << _T("Has ") << countA+countB << _T(" A + B positions, only allowed ") << freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))) << _T(". Remove non-free skill cards to add A or B position slots; ");
+					}
 				}
 				else //exchanged at least 1 skill card for a com style
 				{
 					errorTot++;
-					errorMsg << _T("Has ") << countA << _T(" A positions, only allowed ") << freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))) << _T(". Remove non-free skill cards or up to ") << (numCom - numTrickCom) - freeCOMs << _T(" non-free COM style(s) to add A position slots; ");
+					if (countB == 0)
+					{
+						errorMsg << _T("Has ") << countA << _T(" A positions, only allowed ") << freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))) << _T(". Remove non-free skill cards or up to ") << (numCom - numTrickCom) - freeCOMs << _T(" non-free COM style(s) to add A position slots; ");
+					}
+					else
+					{
+						errorMsg << _T("Has ") << countA+countB << _T(" A + B positions, only allowed ") << freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))) << _T(". Remove non-free skill cards or up to ") << (numCom - numTrickCom) - freeCOMs << _T(" non-free COM style(s) to add A or B position slots; ");
+					}
+					
 				}
 			}
 		}
