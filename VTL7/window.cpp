@@ -675,12 +675,12 @@ void setup_tab1(HWND H)
 		x1, y1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SCIS, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Flip Flap"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Flip Flap*"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
 		x1, y1+ydiff*1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_FLIP, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Marseille Turn"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Marseille Turn*"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
 		x1, y1+ydiff*2, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_MARS, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
@@ -695,7 +695,7 @@ void setup_tab1(HWND H)
 		x1, y1+ydiff*4, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CUTB, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Scotch Move"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Scotch Move*"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
 		x1, y1+ydiff*5, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SCOT, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
@@ -816,7 +816,7 @@ void setup_tab1(HWND H)
 		x1+144, y1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_DOUB, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Crossover Turn"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Crossover Turn*"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
 		x1+144, y1+ydiff*1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CROS, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);

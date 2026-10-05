@@ -464,7 +464,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 					numTrick++;
 				}
                 //Trick cards may be free, count number
-                if(jj == 34 || jj == 28 || jj == 16 || jj == 9 || jj == 11 || jj == 32 || jj == 33 || jj == 6 || jj == 21)
+                if (jj == 34 || jj == 28 || jj == 16 || jj == 9 || jj == 11 || jj == 32 || jj == 33 || jj == 6 || jj == 21 || jj == 1 || jj == 2 || jj == 5 || jj == 29)
 				{
                     hasTrick = true;
 					numTrick++;
@@ -473,7 +473,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				{
 					numSkill++;
 				}
-
+				if (jj == 37)
+				{
+					errorTot++;
+					errorMsg << _T("The GK Penalty Specialist card is banned; ");
+				}
 				//Track Back not allowed with CF, AMF or CMF
 				/*if (jj == 23 && (player.play_pos[0] == 2 || player.play_pos[6] == 2 || player.play_pos[11] == 2 || player.play_pos[10] == 2))
 				{
@@ -515,12 +519,6 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		}
 		int minWeight = max(30, player.height - 129);
 		int maxWeight = player.height - 81;
-		//21 doesn't care about player height when it comes to weight
-		if (pesVersion == 21)
-		{
-			minWeight = 30;
-			maxWeight = 129;
-		}
 		if (player.weight<minWeight || player.weight>maxWeight)
 		{
 			errorTot++;

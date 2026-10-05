@@ -16,7 +16,7 @@ namespace gold { //gold stats
 	const int weak_foot_accuracy = 4;
 	const int height = 195;
 	const int skills = 7; //max number of non free skills allowed
-	const int free_coms = 2; //free coms allowed
+	const int free_coms = 3; //free coms allowed
 	const int free_a = 2; //free a positions allowed, note this includes the A position that a registered position gives
 
 	const int base_stat = 99; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
@@ -60,7 +60,7 @@ namespace silver { //silver stats
 	const int weak_foot_accuracy = 4;
 	const int height = 195;
 	const int skills = 7; //max number of non free skills allowed
-	const int free_coms = 1; //free coms allowed
+	const int free_coms = 2; //free coms allowed
 	const int free_a = 3; //free a positions allowed, note this includes the A position that a registered position gives
 
 	const int base_stat = 89; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
@@ -125,8 +125,8 @@ namespace nm { //nm (nonbuffed) stats
 	const int speed_bonus = 0;
 	const int acceleration_bonus = 0;
 	const int balance_bonus = 0;
-	const int physical_contact_bonus = -8;
-	const int jump_bonus = -8;
+	const int physical_contact_bonus = -7;
+	const int jump_bonus = -7;
 	const int stamina_bonus = -15;
 	const int gk_awareness_bonus = 0;
 	const int catching_bonus = -7;
